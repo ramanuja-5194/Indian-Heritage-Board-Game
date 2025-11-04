@@ -377,8 +377,13 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-http.listen(PORT, '0.0.0.0', () => {
+const HOST = process.env.HOST || '0.0.0.0';
+
+http.listen(PORT, HOST, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`Local: http://localhost:${PORT}`);
-    console.log(`Network: http://192.168.0.119:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(`Local: http://localhost:${PORT}`);
+        console.log(`Network: http://192.168.0.119:${PORT}`);
+    }
 });
