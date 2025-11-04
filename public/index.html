@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aadu Puli Aattam - Goats and Tigers</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <h1 class="game-title">🐐 Aadu Puli Aattam 🐅</h1>
+            <p class="game-subtitle">The Traditional Goats and Tigers Game</p>
+            <div class="login-form">
+                <input type="text" id="usernameInput" placeholder="Enter your name" maxlength="20">
+                <button id="rulesButton" class="btn-secondary">📖 How to Play</button>
+                <button id="joinButton" class="btn-primary">Join Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role Selection Screen -->
+    <div id="roleScreen" class="screen">
+        <div class="role-container">
+            <h2>Choose Your Role</h2>
+            <p class="role-subtitle">Select which side you want to play</p>
+            <div class="role-selection">
+                <div class="role-card" data-role="goats">
+                    <div class="role-icon">🐐</div>
+                    <h3>Goats</h3>
+                    <p>15 pieces • Defensive strategy</p>
+                    <p class="role-objective">Win by trapping all tigers</p>
+                    <button class="btn-role" data-role="goats">Choose Goats</button>
+                </div>
+                <div class="role-card" data-role="tigers">
+                    <div class="role-icon">🐅</div>
+                    <h3>Tigers</h3>
+                    <p>3 pieces • Aggressive strategy</p>
+                    <p class="role-objective">Win by capturing 5 goats</p>
+                    <button class="btn-role" data-role="tigers">Choose Tigers</button>
+                </div>
+            </div>
+            <button id="randomRoleButton" class="btn-secondary">🎲 Random Role</button>
+        </div>
+    </div>
+
+    <!-- Waiting Screen -->
+    <div id="waitingScreen" class="screen">
+        <div class="waiting-container">
+            <h2>Waiting for opponent...</h2>
+            <div class="spinner"></div>
+            <p id="waitingMessage">Please wait while we find you a player</p>
+            <p id="selectedRole" class="selected-role"></p>
+            <button id="cancelWaitButton" class="btn-secondary">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen">
+        <div class="game-container">
+            <!-- Header -->
+            <div class="game-header">
+                <div class="player-info">
+                    <div class="player-card you">
+                        <span class="player-label">You</span>
+                        <span class="player-name" id="yourName"></span>
+                        <span class="player-role" id="yourRole"></span>
+                    </div>
+                    <div class="vs-divider">VS</div>
+                    <div class="player-card opponent">
+                        <span class="player-label">Opponent</span>
+                        <span class="player-name" id="opponentName"></span>
+                        <span class="player-role" id="opponentRole"></span>
+                    </div>
+                </div>
+                <div class="game-actions">
+                    <button id="gameRulesButton" class="btn-icon" title="Game Rules">📖</button>
+                    <button id="quitGameButton" class="btn-icon quit-btn" title="Quit Game">🚪</button>
+                </div>
+            </div>
+
+            <!-- Game Stats -->
+            <div class="game-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Current Turn</span>
+                    <span class="stat-value" id="currentTurn">Goats</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Goats Placed</span>
+                    <span class="stat-value" id="goatsPlaced">0 / 15</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Goats Captured</span>
+                    <span class="stat-value" id="goatsCaptured">0 / 5</span>
+                </div>
+            </div>
+
+            <!-- Message Box -->
+            <div class="message-box" id="messageBox">
+                <span id="messageText"></span>
+            </div>
+
+            <!-- Game Board -->
+            <div class="board-container">
+                <svg id="gameBoard" viewBox="0 0 100 75">
+                    <!-- Lines will be drawn here -->
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rules Modal -->
+    <div id="rulesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📖 How to Play Aadu Puli Aattam</h2>
+                <button class="modal-close" id="closeRulesModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="rules-section">
+                    <h3>🎯 Objective</h3>
+                    <ul>
+                        <li><strong>Tigers Win:</strong> Capture 5 goats</li>
+                        <li><strong>Goats Win:</strong> Trap all three tigers so they cannot move</li>
+                    </ul>
+                </div>
+                
+                <div class="rules-section">
+                    <h3>🎮 Setup</h3>
+                    <ul>
+                        <li>3 Tigers start at positions 18, 19, and 22</li>
+                        <li>15 Goats start off the board</li>
+                        <li>Goats player goes first</li>
+                    </ul>
+                </div>
+                
+                <div class="rules-section">
+                    <h3>🐐 Goats' Turn</h3>
+                    <ul>
+                        <li><strong>Placement Phase:</strong> Place one goat per turn on any empty intersection until all 15 are placed</li>
+                        <li><strong>Movement Phase:</strong> After all goats are placed, move one goat to an adjacent empty intersection per turn</li>
+                        <li>Goats cannot capture tigers</li>
+                    </ul>
+                </div>
+                
+                <div class="rules-section">
+                    <h3>🐅 Tigers' Turn</h3>
+                    <ul>
+                        <li>Move one tiger to an adjacent empty intersection</li>
+                        <li><strong>Capturing:</strong> Jump over a goat to an empty space directly beyond it to capture</li>
+                        <li>Only one capture per turn</li>
+                        <li>Tigers can move and capture from the start</li>
+                    </ul>
+                </div>
+                
+                <div class="rules-section">
+                    <h3>💡 Tips</h3>
+                    <ul>
+                        <li><strong>For Goats:</strong> Work together to surround and trap tigers. Don't leave gaps!</li>
+                        <li><strong>For Tigers:</strong> Create multiple threat points. Force goats into positions where you can capture them.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="closeRulesBtn">Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quit Confirmation Modal -->
+    <div id="quitModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚠️ Quit Game?</h2>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to quit? Your opponent will win the game.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelQuitBtn">Cancel</button>
+                <button class="btn-danger" id="confirmQuitBtn">Yes, Quit Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="gameOverlay" class="game-overlay">
+        <div class="overlay-content">
+            <h2 id="gameOverTitle"></h2>
+            <p id="gameOverMessage"></p>
+            <button id="newGameButton" class="btn-primary">New Game</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
