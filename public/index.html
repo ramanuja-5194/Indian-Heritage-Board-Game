@@ -4,9 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aadu Puli Aattam - Goats and Tigers</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Audio Elements -->
+    <audio id="moveSoundGoat" preload="auto">
+        <source src="sounds/move-goat.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="moveSoundTiger" preload="auto">
+        <source src="sounds/move-tiger.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="captureSound" preload="auto">
+        <source src="sounds/capture.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="winSound" preload="auto">
+        <source src="sounds/win.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="loseSound" preload="auto">
+        <source src="sounds/lose.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="placementSound" preload="auto">
+        <source src="sounds/placement.mp3" type="audio/mpeg">
+    </audio>
+
     <!-- Login Screen -->
     <div id="loginScreen" class="screen active">
         <div class="login-container">
@@ -75,6 +96,7 @@
                     </div>
                 </div>
                 <div class="game-actions">
+                    <button id="soundToggle" class="btn-icon" title="Toggle Sound">🔊</button>
                     <button id="gameRulesButton" class="btn-icon" title="Game Rules">📖</button>
                     <button id="quitGameButton" class="btn-icon quit-btn" title="Quit Game">🚪</button>
                 </div>

@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "setup-sounds": "node create-placeholder-sounds.js"
   },
   "keywords": ["game", "multiplayer", "traditional"],
   "author": "",

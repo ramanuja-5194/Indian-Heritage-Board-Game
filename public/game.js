@@ -77,13 +77,46 @@ const confirmQuitBtn = document.getElementById('confirmQuitBtn');
 const randomRoleButton = document.getElementById('randomRoleButton');
 const cancelWaitButton = document.getElementById('cancelWaitButton');
 const selectedRoleEl = document.getElementById('selectedRole');
+const soundToggle = document.getElementById('soundToggle');
+
+// Sound elements
+const moveSoundGoat = document.getElementById('moveSoundGoat');
+const moveSoundTiger = document.getElementById('moveSoundTiger');
+const captureSound = document.getElementById('captureSound');
+const winSound = document.getElementById('winSound');
+const loseSound = document.getElementById('loseSound');
+const placementSound = document.getElementById('placementSound');
 
 let selectedRole = null;
+let soundEnabled = true;
+
+// Sound management
+function playSound(audio) {
+    if (soundEnabled && audio) {
+        audio.currentTime = 0;
+        audio.play().catch(err => console.log('Audio play failed:', err));
+    }
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+    soundToggle.title = soundEnabled ? 'Mute Sound' : 'Unmute Sound';
+    localStorage.setItem('soundEnabled', soundEnabled);
+}
 
 // Initialize
 function init() {
     drawBoard();
     setupEventListeners();
+    
+    // Load sound preference
+    const savedSound = localStorage.getItem('soundEnabled');
+    if (savedSound !== null) {
+        soundEnabled = savedSound === 'true';
+        soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+        soundToggle.title = soundEnabled ? 'Mute Sound' : 'Unmute Sound';
+    }
 }
 
 // Event Listeners
@@ -117,6 +150,9 @@ function setupEventListeners() {
     quitGameButton.addEventListener('click', () => openModal(quitModal));
     cancelQuitBtn.addEventListener('click', () => closeModal(quitModal));
     confirmQuitBtn.addEventListener('click', handleQuitGame);
+    
+    // Sound toggle
+    soundToggle.addEventListener('click', toggleSound);
     
     // Cancel waiting
     cancelWaitButton.addEventListener('click', () => {
@@ -197,7 +233,29 @@ socket.on('gameStart', (data) => {
 });
 
 socket.on('gameUpdate', (data) => {
+    const previousGoatsCaptured = gameState.goatsCaptured;
+    const previousBoard = [...gameState.board];
+    
     updateGameState(data);
+    
+    // Play sound based on what happened
+    if (data.goatsCaptured > previousGoatsCaptured) {
+        // A goat was captured
+        playSound(captureSound);
+    } else {
+        // Check if a piece moved
+        const boardChanged = previousBoard.some((piece, idx) => piece !== data.board[idx]);
+        if (boardChanged) {
+            // Determine which piece moved
+            if (data.currentTurn === 'goats') {
+                // Tiger just moved (turn switched to goats)
+                playSound(moveSoundTiger);
+            } else {
+                // Goat just moved (turn switched to tigers)
+                playSound(moveSoundGoat);
+            }
+        }
+    }
     
     if (data.gameOver) {
         showGameOver(data.winner);
@@ -319,6 +377,7 @@ function handlePointClick(index) {
     if (gameState.role === 'goats' && gameState.goatsPlaced < 15) {
         if (gameState.board[index] === null) {
             socket.emit('placeGoat', { position: index });
+            playSound(placementSound);
         } else {
             showMessage('This position is occupied!', 'error');
         }
@@ -329,6 +388,7 @@ function handlePointClick(index) {
     if (gameState.selectedPiece !== null && gameState.validMoves.includes(index)) {
         socket.emit('movePiece', { from: gameState.selectedPiece, to: index });
         clearSelection();
+        // Sound will be played when server confirms the move
     }
 }
 
@@ -470,6 +530,13 @@ function switchScreen(screen) {
 // Show Game Over
 function showGameOver(winner, message = null) {
     const didIWin = winner === gameState.role;
+    
+    // Play win/lose sound
+    if (didIWin) {
+        playSound(winSound);
+    } else {
+        playSound(loseSound);
+    }
     
     gameOverTitle.textContent = didIWin ? '🎉 You Win!' : '😔 You Lose';
     gameOverMessage.textContent = message || (didIWin 
